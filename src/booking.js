@@ -102,8 +102,10 @@ async function createBooking({ requested_by, day, date, start, end, babysitter_i
 
     if (!sitter.intro_sent) {
       const introMsg = render('intro', { name: sitter.name, family: familyName, admin: adminName }, sitter.gender);
-      await send(sitter.phone, introMsg);
-      db.prepare('UPDATE babysitters SET intro_sent=1 WHERE id=?').run(sitter.id);
+      const introResult = await send(sitter.phone, introMsg);
+      if (introResult && introResult.status >= 200 && introResult.status < 300) {
+        db.prepare('UPDATE babysitters SET intro_sent=1 WHERE id=?').run(sitter.id);
+      }
     }
 
     const offerMsg = render('offer', {
