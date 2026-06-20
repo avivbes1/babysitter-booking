@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: Voice Server API (Tudat)
+  description: HTTP interface for sending WhatsApp messages via Tudat's WhatsApp client.
+  version: 1.0.0
+paths:
+  /send-message:
+    post:
+      summary: Send a WhatsApp text message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [to, text]
+              properties:
+                to:
+                  type: string
+                  description: E.164 phone number or WhatsApp JID (e.g. 120363...@g.us)
+                  example: "+972501234567"
+                text:
+                  type: string
+                  description: Message body text
+                  example: "שלום! יש לנו בקשה לשמרטפות."
+      responses:
+        '200':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '400':
+          description: Missing required fields — must include both `to` and `text`
+        '401':
+          description: Invalid or missing x-shared-token header
+        '500':
+          description: WhatsApp client error
+      security:
+        - sharedToken: []
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  whatsapp_connected:
+                    type: boolean
+components:
+  securitySchemes:
+    sharedToken:
+      type: apiKey
+      in: header
+      name: x-shared-token

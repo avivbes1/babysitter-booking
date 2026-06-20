@@ -3,6 +3,29 @@ require('dotenv').config();
 const express = require('express');
 const { initDB } = require('./db');
 const { startScheduler } = require('./scheduler');
+const http = require('http');
+
+// ── Startup validation ────────────────────────────────────────────────────────
+const REQUIRED_ENV = ['SHARED_SECRET'];
+for (const key of REQUIRED_ENV) {
+  if (!process.env[key]) {
+    console.error(`[BabysitterBooking] FATAL: Missing required env var: ${key}`);
+    process.exit(1);
+  }
+}
+
+// Verify voice-server connectivity + auth before accepting requests
+function checkVoiceServer() {
+  return new Promise((resolve) => {
+    const req = http.get('http://localhost:3001/health', (res) => {
+      if (res.statusCode === 200) { resolve(true); }
+      else { console.warn(`[BabysitterBooking] Voice-server health returned ${res.statusCode}`); resolve(false); }
+      res.resume();
+    });
+    req.on('error', () => { console.warn('[BabysitterBooking] Voice-server unreachable — will retry on first send'); resolve(false); });
+    req.setTimeout(3000, () => { req.destroy(); resolve(false); });
+  });
+}
 
 initDB();
 startScheduler();

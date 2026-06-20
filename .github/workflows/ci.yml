@@ -18,3 +18,23 @@ jobs:
         run: node scripts/detect-pii.js src/
       - name: Scan .env.example for PII
         run: node scripts/detect-pii.js .env.example
+
+  test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Run integration tests
+        run: node tests/integration.test.js
+        env:
+          SHARED_SECRET: test-secret-ci
+          DATABASE_PATH: /tmp/test-babysitters.sqlite
+          AGENT_OUTBOUND_WEBHOOK_URL: http://localhost:3099/send-message
+          MASTER_GROUP_JID: test-master@g.us
+          FAMILY_NAME: TestFamily
+          DEFAULT_TIMEZONE: Asia/Jerusalem

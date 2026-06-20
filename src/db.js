@@ -35,6 +35,11 @@ function initDB() {
       created_at TEXT NOT NULL
     );
 
+    -- Booking state machine:
+    -- open → filled   (first sitter accepts)
+    -- open → expired  (no acceptance before start_ts - 2h)
+    -- open → cancelled (admin cancels before fill)
+    -- filled → cancelled (admin cancels after fill — triggers cancellation template to sitter)
     CREATE TABLE IF NOT EXISTS bookings (
       id INTEGER PRIMARY KEY,
       requested_by TEXT NOT NULL,

@@ -5,8 +5,8 @@ const { render, renderMaster } = require('./templates.he.js');
 const { send, sendToMaster } = require('./outbound');
 const { fillBooking, getOfferCounts, normalizePhone } = require('./booking');
 
-const ACCEPT = /^(כן|אשמח|מתאים|בטח|בשמחה|ok|yes|אוקיי|נהדר|מעולה)\b/i;
-const DECLINE = /^(לא|לא\s+יכולה|לא\s+יכול|לא\s+פנויה|לא\s+פנוי|סורי|sorry|לא\s+אוכל)\b/i;
+const ACCEPT = /^(כן|אשמח|מתאים|בטח|בשמחה|ok|yes|אוקיי|נהדר|מעולה)(\s|$)/i;
+const DECLINE = /^(לא|לא\s+יכולה|לא\s+יכול|לא\s+פנויה|לא\s+פנוי|סורי|sorry|לא\s+אוכל)(\s|$)/i;
 const OPT_OUT = /תפסיקו|הסר|STOP|stop/;
 
 function dedup(from_phone, ts, body) {

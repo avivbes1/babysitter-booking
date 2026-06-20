@@ -110,7 +110,7 @@ async function createBooking({ requested_by, day, date, start, end, babysitter_i
 
     const offerMsg = render('offer', {
       name: sitter.name, day, date, start, end,
-      rate: rate || sitter.hourly_rate_nis,
+      // rate intentionally omitted — internal data, discussed verbally
     }, sitter.gender);
     await send(sitter.phone, offerMsg);
   }
