@@ -3,3 +3,4 @@ data/
 node_modules/
 *.sqlite
 *.log
+scripts/pii-patterns.local.js
