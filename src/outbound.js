@@ -4,7 +4,7 @@ const https = require('https');
 
 function send(to, body) {
   return new Promise((resolve, reject) => {
-    const webhookUrl = process.env.TUDAT_OUTBOUND_WEBHOOK_URL || 'http://localhost:3001/send-message';
+    const webhookUrl = process.env.AGENT_OUTBOUND_WEBHOOK_URL || 'http://localhost:3001/send-message';
     const payload = JSON.stringify({ to, body });
     const url = new URL(webhookUrl);
     const lib = url.protocol === 'https:' ? https : http;

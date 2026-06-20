@@ -11,10 +11,10 @@ const app = express();
 app.use(express.json());
 
 // Auth middleware
-const SHARED_SECRET = process.env.BRAUN_SHARED_SECRET;
+const SHARED_SECRET = process.env.SHARED_SECRET;
 app.use((req, res, next) => {
   if (!SHARED_SECRET) return next(); // no secret configured → open (dev mode)
-  const token = req.headers['x-braun-token'];
+  const token = req.headers['x-shared-token'];
   if (token !== SHARED_SECRET) return res.status(401).json({ error: 'Unauthorized' });
   next();
 });
