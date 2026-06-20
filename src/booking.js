@@ -93,7 +93,7 @@ async function createBooking({ requested_by, day, date, start, end, babysitter_i
 
   const firstAdmin = getFirstAdmin();
   const adminName = firstAdmin ? firstAdmin.name : 'המשפחה';
-  const familyName = process.env.FAMILY_NAME || 'הבסינסקים';
+  const familyName = process.env.FAMILY_NAME || 'המשפחה';
 
   for (const sitter of sitters) {
     db.prepare(

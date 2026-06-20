@@ -36,7 +36,7 @@ async function checkReminders() {
   const db = getDB();
   const filledBookings = db.prepare("SELECT * FROM bookings WHERE status='filled'").all();
   const now = Date.now();
-  const familyName = process.env.FAMILY_NAME || 'הבסינסקים';
+  const familyName = process.env.FAMILY_NAME || 'המשפחה';
 
   for (const booking of filledBookings) {
     const reminderMs = new Date(booking.start_ts).getTime() - 2 * 3600 * 1000;
