@@ -4,6 +4,10 @@ const { getDB } = require('./db');
 const { render, renderMaster } = require('./templates.he.js');
 const { send, sendToMaster } = require('./outbound');
 
+// How far before the booking start time to expire open offers and send reminders.
+// Changing this one constant updates both the expiry check and the reminder check.
+const LEAD_TIME_MS = 2 * 60 * 60 * 1000; // 2 hours
+
 function fmt(d) {
   return new Date(d).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jerusalem' });
 }
@@ -17,7 +21,7 @@ async function checkExpiry() {
   const now = Date.now();
 
   for (const booking of openBookings) {
-    const expiryMs = new Date(booking.start_ts).getTime() - 2 * 3600 * 1000;
+    const expiryMs = new Date(booking.start_ts).getTime() - LEAD_TIME_MS;
     if (now >= expiryMs) {
       db.prepare("UPDATE bookings SET status='expired' WHERE id=?").run(booking.id);
       db.prepare("UPDATE offers SET status='expired' WHERE booking_id=? AND status='sent'").run(booking.id);
@@ -39,7 +43,7 @@ async function checkReminders() {
   const familyName = process.env.FAMILY_NAME || 'המשפחה';
 
   for (const booking of filledBookings) {
-    const reminderMs = new Date(booking.start_ts).getTime() - 2 * 3600 * 1000;
+    const reminderMs = new Date(booking.start_ts).getTime() - LEAD_TIME_MS;
     if (now < reminderMs) continue;
 
     const offer = db.prepare(

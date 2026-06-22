@@ -15,8 +15,18 @@ function computeHours(startTs, endTs) {
 }
 
 function buildTimestamp(date, time) {
-  // date: YYYY-MM-DD, time: HH:MM → ISO with +03:00
-  return `${date}T${time}:00+03:00`;
+  // Resolve Israel's actual UTC offset on the given date (DST-aware).
+  // Israel is UTC+2 in winter and UTC+3 in summer — never hardcode +03:00.
+  // We probe noon UTC on that date so we stay within the same calendar day.
+  const noonUtc = new Date(`${date}T12:00:00Z`);
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Jerusalem',
+    timeZoneName: 'shortOffset',
+  }).formatToParts(noonUtc);
+  const tzPart = (parts.find(p => p.type === 'timeZoneName') || {}).value || 'GMT+3';
+  const match = tzPart.match(/GMT([+-])(\d+)/);
+  const offset = match ? `${match[1]}${match[2].padStart(2, '0')}:00` : '+03:00';
+  return `${date}T${time}:00${offset}`;
 }
 
 function getFirstAdmin() {

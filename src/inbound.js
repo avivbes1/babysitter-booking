@@ -137,8 +137,16 @@ async function handleInbound({ from_phone, body, ts }) {
     return;
   }
 
-  // Find most recent open offer
+  // Find the most relevant open offer for this sitter.
+  // Prefer the soonest unanswered ('sent') offer so a plain "yes" resolves
+  // the most urgent booking even when two offers are outstanding.
+  // Falls back to any recent open/filled offer (handles already-accepted replies).
   const offer = db.prepare(`
+    SELECT o.*, b.start_ts, b.end_ts, b.job_date, b.status as booking_status
+    FROM offers o JOIN bookings b ON o.booking_id = b.id
+    WHERE o.babysitter_id = ? AND o.status = 'sent' AND b.status = 'open'
+    ORDER BY b.start_ts ASC LIMIT 1
+  `).get(sitter.id) || db.prepare(`
     SELECT o.*, b.start_ts, b.end_ts, b.job_date, b.status as booking_status
     FROM offers o JOIN bookings b ON o.booking_id = b.id
     WHERE o.babysitter_id = ? AND b.status IN ('open', 'filled')

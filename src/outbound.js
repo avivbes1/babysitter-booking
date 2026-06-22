@@ -2,6 +2,7 @@
 const http = require('http');
 
 const OUTBOUND_URL = process.env.AGENT_OUTBOUND_WEBHOOK_URL || 'http://localhost:3001/send-message';
+const SHARED_SECRET = process.env.SHARED_SECRET || '';
 const MAX_RETRIES = 3;
 const RETRY_BASE_MS = 1000;
 
@@ -19,6 +20,7 @@ async function sendOnce(to, text) {
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(payload),
+        ...(SHARED_SECRET ? { 'x-shared-token': SHARED_SECRET } : {}),
       },
     }, (res) => {
       let data = '';
