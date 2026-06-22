@@ -1,6 +1,6 @@
 # Babysitter Booking Microservice
 
-A lightweight HTTP service that manages babysitter availability broadcasts via WhatsApp. Part of the Besinsky family automation stack.
+A lightweight HTTP service that manages babysitter availability broadcasts via WhatsApp. Part of a family home-automation stack.
 
 ## What it does
 
@@ -12,7 +12,7 @@ A lightweight HTTP service that manages babysitter availability broadcasts via W
 ## Architecture
 
 ```
-[Lipa / Aviv DM]
+[Family admin DM]
       │ POST /bookings
       ▼
   babysitter-booking (port 3002)
@@ -42,7 +42,7 @@ Headers: `x-shared-token: <SHARED_SECRET>`
 Body:
 ```json
 {
-  "requested_by": "+972504606660",
+  "requested_by": "+972501234567",
   "day": "יום שני",
   "date": "2026-01-20",
   "start": "18:00",
